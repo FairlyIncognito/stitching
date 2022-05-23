@@ -21,5 +21,16 @@ class ListingController extends Controller
         ]);
     }
 
+    // Show create form
+    public function create() {
+        return view('listings.create');
+    }
+
+    // Store listing data from form
+    public function store(Request $request) {
+        dd($request->all());
+        
+        return redirect('/');
+    }
     
 }
