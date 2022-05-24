@@ -25,7 +25,7 @@
             },
         };
     </script>
-    <title>Gigs</title>
+    <title>Stitches</title>
     
 </head>
 <body class="mb-48">

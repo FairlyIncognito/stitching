@@ -2,7 +2,7 @@
     <x-card class="p-10">
         <header>
             <h1 class="text-3xl text-center font-bold my-6 uppercase">
-                Stitches Manager
+                xStitch Manager
             </h1>
         </header>
 
@@ -126,40 +126,31 @@
                                 </svg>
                             </div>
                         </th>
+                        <th class="p-2 border-r cursor-pointer text-sm font-thin text-gray-500">
+                            <div class="flex items-center justify-center">
+                                Actions
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @unless($listings->isEmpty())
-                        <tr class="bg-gray-50 text-center">
-                            <td class="p-2 border-r">
-                                
-                            </td>
-                            <td class="p-2 border-r">
-                                <input type="text" class="border p-1">
-                            </td>
-                            <td class="p-2 border-r">
-                                <input type="text" class="border p-1">
-                            </td>
-                            <td class="p-2 border-r">
-                                <input type="text" class="border p-1">
-                            </td>
-                            <td class="p-2 border-r">
-                                <input type="text" class="border p-1">
-                            </td>
-                            <td class="p-2">
-                                <input type="text" class="border p-1">
-                            </td>
-                        </tr>
+                        
 
                         @foreach ($listings as $listing)
                             <tr class="bg-gray-100 text-center border-b text-sm text-gray-600">
-                                <td class="p-2 border-r">
-                                    <input type="checkbox">
-                                </td>
                                 <td class="p-2 border-r">{{ $listing->number }}</td>
                                 <td class="p-2 border-r">{{ $listing->name }}</td>
-                                <td class="p-2 border-r">{{ $listing->color }}</td>
-                                <td class="p-2 border-r">{{ $listing->stock }}</td>
+                                <td class="p-2 border-r"><input type="color" value="{{ $listing->color }}" /></td>
+                                
+                                <td class="p-2 border-r">
+                                    @if($listing->in_stock == 1)
+                                        Yes
+                                    @elseif($listing->in_stock == 0)
+                                        No
+                                    @endif
+                                </td>
+                   
                                 <td>
                                     <a href="/listings/{{ $listing->id }}/edit" class="bg-blue-500 p-2 text-white hover:shadow-lg text-xs font-thin">Edit</a>
                                     <a href="/listings/{{ $listing->id }}/delete" class="bg-red-500 p-2 text-white hover:shadow-lg text-xs font-thin">Delete</a>
