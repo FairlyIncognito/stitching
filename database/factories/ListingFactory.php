@@ -17,13 +17,10 @@ class ListingFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->sentence(),
-            'tags' => '' . $this->faker->fileExtension() . ', ' . $this->faker->fileExtension() . ', ' . $this->faker->fileExtension(),
-            'company' => $this->faker->company(),
-            'email' => $this->faker->companyEmail(),
-            'website' => $this->faker->url(),
-            'location' => $this->faker->city(),
-            'description' => $this->faker->paragraph(5)
+            'number' => $this->faker->randomNumber(3, true),
+            'name' => $this->faker->colorName(),
+            'color' => $this->faker->hexColor(),
+            'in_stock' => $this->faker->boolean()
         ];
     }
 }

@@ -30,19 +30,11 @@ class ListingController extends Controller
     // Store listing data from form
     public function store(Request $request) {
         $formFields = $request->validate([
-            'title' => 'required',
-            'company' => ['required', Rule::unique('listings', 'company')],
-            'location' => 'required',
-            'website' => 'required',
-            'email' => ['required', 'email'],
-            'tags' => 'required',
-            'description' => 'required'
+            'number' => 'required',
+            'name' => 'required',
+            'color' => 'required',
+            'in_stock' => 'required', 
         ]);
-
-        if($request->hasFile('logo')) {
-            // Add the path to the $formFields array and store the logo in the public directory within a logos folder
-            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
-        }
 
         $formFields['user_id'] = auth()->id();
 
@@ -64,20 +56,11 @@ class ListingController extends Controller
         }
         
         $formFields = $request->validate([
-            'title' => 'required',
-            'company' => 'required',
-            'location' => 'required',
-            'website' => 'required',
-            'email' => ['required', 'email'],
-            'tags' => 'required',
-            'description' => 'required'
+            'number' => 'required',
+            'name' => 'required',
+            'color' => 'required',
+            'in_stock' => 'required', 
         ]);
-
-        // Image upload
-        if($request->hasFile('logo')) {
-            // Add the path to the $formFields array and store the logo in the public directory within a logos folder
-            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
-        }
 
         $listing->update($formFields);
         
@@ -98,6 +81,6 @@ class ListingController extends Controller
 
     // Manage listings
     public function manage() {
-        return view('listings.manage', ['listings' => auth()->user()->listings()->get()]); // listings() does exist on the User model, ignore IDE error
+        return view('listings.manage', ['listings' => auth()->user()->listings()->paginate(25)]); // listings() does exist on the User model, ignore IDE error
     }
 }
