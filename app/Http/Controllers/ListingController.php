@@ -44,6 +44,8 @@ class ListingController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
+        $formFields['user_id'] = auth()->id();
+
         Listing::create($formFields);
         
         return redirect('/')->with('message', 'Listing created successfully!');
@@ -56,6 +58,11 @@ class ListingController extends Controller
 
     // Store listing data from form
     public function update(Request $request, Listing $listing) {
+        // Make sure logged in user is owner
+        if($listing->user_id != auth()->id()) {
+            abort(403, 'Unauthorized Action');
+        }
+        
         $formFields = $request->validate([
             'title' => 'required',
             'company' => 'required',
@@ -66,6 +73,7 @@ class ListingController extends Controller
             'description' => 'required'
         ]);
 
+        // Image upload
         if($request->hasFile('logo')) {
             // Add the path to the $formFields array and store the logo in the public directory within a logos folder
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
@@ -78,8 +86,18 @@ class ListingController extends Controller
 
     // Delete listing
     public function destroy(Listing $listing) {
+        // Make sure logged in user is owner
+        if($listing->user_id != auth()->id()) {
+            abort(403, 'Unauthorized Action');
+        }
+        
         $listing->delete();
 
         return redirect('/')->with('message', 'Listing deleted successfully!');
+    }
+
+    // Manage listings
+    public function manage() {
+        return view('listings.manage', ['listings' => auth()->user()->listings()->get()]); // listings() does exist on the User model, ignore IDE error
     }
 }
