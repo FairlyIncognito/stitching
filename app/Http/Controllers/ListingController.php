@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Listing;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ListingController extends Controller
 {
     // Show all listings
     public function index() {
         return view('listings.index', [
-            'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()
+            'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(6)
         ]);
     }
 
@@ -28,9 +29,57 @@ class ListingController extends Controller
 
     // Store listing data from form
     public function store(Request $request) {
-        dd($request->all());
+        $formFields = $request->validate([
+            'title' => 'required',
+            'company' => ['required', Rule::unique('listings', 'company')],
+            'location' => 'required',
+            'website' => 'required',
+            'email' => ['required', 'email'],
+            'tags' => 'required',
+            'description' => 'required'
+        ]);
+
+        if($request->hasFile('logo')) {
+            // Add the path to the $formFields array and store the logo in the public directory within a logos folder
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        Listing::create($formFields);
         
-        return redirect('/');
+        return redirect('/')->with('message', 'Listing created successfully!');
     }
-    
+
+    // Show edit form
+    public function edit(Listing $listing) {
+        return view('listings.edit', ['listing' => $listing]);
+    }
+
+    // Store listing data from form
+    public function update(Request $request, Listing $listing) {
+        $formFields = $request->validate([
+            'title' => 'required',
+            'company' => 'required',
+            'location' => 'required',
+            'website' => 'required',
+            'email' => ['required', 'email'],
+            'tags' => 'required',
+            'description' => 'required'
+        ]);
+
+        if($request->hasFile('logo')) {
+            // Add the path to the $formFields array and store the logo in the public directory within a logos folder
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        $listing->update($formFields);
+        
+        return back()->with('message', 'Listing updated successfully!');
+    }
+
+    // Delete listing
+    public function destroy(Listing $listing) {
+        $listing->delete();
+
+        return redirect('/')->with('message', 'Listing deleted successfully!');
+    }
 }
